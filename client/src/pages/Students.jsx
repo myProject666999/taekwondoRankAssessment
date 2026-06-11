@@ -41,13 +41,25 @@ export default function Students() {
   }
 
   function openEdit(s) {
-    setForm({ name: s.name, gender: s.gender, birth_date: s.birth_date || '', phone: s.phone || '', current_rank: s.current_rank, enrollment_date: s.enrollment_date, total_hours: s.total_hours, coach_id: s.coach_id || '' });
+    setForm({
+      name: s.name, gender: s.gender,
+      birth_date: s.birth_date ? s.birth_date.slice(0, 10) : '',
+      phone: s.phone || '', current_rank: s.current_rank,
+      enrollment_date: s.enrollment_date ? s.enrollment_date.slice(0, 10) : '',
+      total_hours: s.total_hours, coach_id: s.coach_id || ''
+    });
     setEditId(s.id);
     setModal('form');
   }
 
   async function handleSave() {
-    const payload = { ...form, coach_id: form.coach_id || null, total_hours: Number(form.total_hours) };
+    const payload = {
+      ...form,
+      coach_id: form.coach_id || null,
+      total_hours: Number(form.total_hours),
+      birth_date: form.birth_date || null,
+      enrollment_date: form.enrollment_date || null
+    };
     if (editId) {
       await api.put(`/students/${editId}`, payload);
     } else {

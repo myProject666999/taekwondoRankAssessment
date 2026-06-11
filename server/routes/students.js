@@ -39,11 +39,13 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   const { name, gender, birth_date, phone, current_rank, enrollment_date, total_hours, coach_id } = req.body;
+  const bd = birth_date ? birth_date.slice(0, 10) : null;
+  const ed = enrollment_date ? enrollment_date.slice(0, 10) : null;
   try {
     const [result] = await pool.query(
       `INSERT INTO students (name, gender, birth_date, phone, current_rank, enrollment_date, total_hours, coach_id)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [name, gender, birth_date, phone, current_rank || '白带', enrollment_date, total_hours || 0, coach_id]
+      [name, gender, bd, phone, current_rank || '白带', ed, total_hours || 0, coach_id]
     );
     debug('新增学员: id=%d, name=%s', result.insertId, name);
     res.json({ code: 0, data: { id: result.insertId } });
@@ -55,11 +57,13 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   const { name, gender, birth_date, phone, current_rank, enrollment_date, total_hours, coach_id, status } = req.body;
+  const bd = birth_date ? birth_date.slice(0, 10) : null;
+  const ed = enrollment_date ? enrollment_date.slice(0, 10) : null;
   try {
     const [result] = await pool.query(
       `UPDATE students SET name=?, gender=?, birth_date=?, phone=?, current_rank=?,
        enrollment_date=?, total_hours=?, coach_id=?, status=? WHERE id=?`,
-      [name, gender, birth_date, phone, current_rank, enrollment_date, total_hours, coach_id, status, req.params.id]
+      [name, gender, bd, phone, current_rank, ed, total_hours, coach_id, status, req.params.id]
     );
     if (result.affectedRows === 0) return res.status(404).json({ code: 1, message: '学员不存在' });
     debug('更新学员: id=%d', req.params.id);
