@@ -59,11 +59,12 @@ router.put('/:id', async (req, res) => {
   const { name, gender, birth_date, phone, current_rank, enrollment_date, total_hours, coach_id, status } = req.body;
   const bd = birth_date ? birth_date.slice(0, 10) : null;
   const ed = enrollment_date ? enrollment_date.slice(0, 10) : null;
+  const st = status || 'active';
   try {
     const [result] = await pool.query(
       `UPDATE students SET name=?, gender=?, birth_date=?, phone=?, current_rank=?,
        enrollment_date=?, total_hours=?, coach_id=?, status=? WHERE id=?`,
-      [name, gender, bd, phone, current_rank, ed, total_hours, coach_id, status, req.params.id]
+      [name, gender, bd, phone, current_rank, ed, total_hours, coach_id, st, req.params.id]
     );
     if (result.affectedRows === 0) return res.status(404).json({ code: 1, message: '学员不存在' });
     debug('更新学员: id=%d', req.params.id);

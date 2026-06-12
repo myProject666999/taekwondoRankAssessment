@@ -46,7 +46,8 @@ export default function Students() {
       birth_date: s.birth_date ? s.birth_date.slice(0, 10) : '',
       phone: s.phone || '', current_rank: s.current_rank,
       enrollment_date: s.enrollment_date ? s.enrollment_date.slice(0, 10) : '',
-      total_hours: s.total_hours, coach_id: s.coach_id || ''
+      total_hours: s.total_hours, coach_id: s.coach_id || '',
+      status: s.status || 'active'
     });
     setEditId(s.id);
     setModal('form');
@@ -58,7 +59,8 @@ export default function Students() {
       coach_id: form.coach_id || null,
       total_hours: Number(form.total_hours),
       birth_date: form.birth_date || null,
-      enrollment_date: form.enrollment_date || null
+      enrollment_date: form.enrollment_date || null,
+      status: form.status || 'active'
     };
     if (editId) {
       await api.put(`/students/${editId}`, payload);
@@ -153,6 +155,9 @@ export default function Students() {
             <div className="form-row">
               <div className="form-group"><label>累计课时</label><input type="number" value={form.total_hours} onChange={e => setForm({ ...form, total_hours: e.target.value })} /></div>
               <div className="form-group"><label>教练</label><select value={form.coach_id} onChange={e => setForm({ ...form, coach_id: e.target.value })}><option value="">未分配</option>{coaches.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></div>
+            </div>
+            <div className="form-row">
+              <div className="form-group"><label>状态</label><select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}><option value="active">在训</option><option value="inactive">离馆</option></select></div>
             </div>
             <div className="modal-actions">
               <button className="btn btn-outline" onClick={() => setModal(null)}>取消</button>

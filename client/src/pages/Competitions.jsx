@@ -24,7 +24,17 @@ export default function Competitions() {
   }
 
   async function handleSave() {
-    await api.post('/competitions', { ...form, student_id: Number(form.student_id), placement: Number(form.placement), year: Number(form.year) });
+    if (!form.student_id || !form.competition_name || !form.competition_date) {
+      return alert('请填写学员、比赛名称和比赛日期');
+    }
+    const payload = {
+      ...form,
+      student_id: Number(form.student_id),
+      placement: Number(form.placement),
+      year: Number(form.year),
+      competition_date: form.competition_date.slice(0, 10)
+    };
+    await api.post('/competitions', payload);
     setModal(false);
     setForm(emptyForm);
     load();

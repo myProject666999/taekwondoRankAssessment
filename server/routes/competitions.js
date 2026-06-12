@@ -37,12 +37,14 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
   const { student_id, competition_name, competition_level, competition_date, placement, year } = req.body;
+  if (!competition_date) return res.status(400).json({ code: 1, message: '比赛日期不能为空' });
+  const cd = competition_date.slice(0, 10);
   const points = calculatePoints(competition_level, placement);
   try {
     const [result] = await pool.query(
       `INSERT INTO competition_points (student_id, competition_name, competition_level, competition_date, placement, points, year)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [student_id, competition_name, competition_level, competition_date, placement, points, year]
+      [student_id, competition_name, competition_level, cd, placement, points, year]
     );
     debug('新增比赛积分: id=%d, student_id=%d, points=%d', result.insertId, student_id, points);
     res.json({ code: 0, data: { id: result.insertId, points } });
